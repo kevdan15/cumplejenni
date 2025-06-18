@@ -2,39 +2,121 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feliz Cumple Jenni 🎉</title>
+  <title>🎉 Feliz Cumple Jenni 🎉</title>
   <style>
     body {
-      background: linear-gradient(to bottom right, #ffe0f0, #ffd6e9);
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle, #ffe4f0, #ffcce0);
       font-family: 'Comic Sans MS', cursive;
-      text-align: center;
-      padding: 60px 20px;
-      color: #8a2be2;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
+
     h1 {
-      font-size: 3.5em;
-      margin-bottom: 0.2em;
-      animation: bounce 1.5s infinite alternate;
+      font-size: 4em;
+      color: #d63384;
+      animation: glow 1s ease-in-out infinite alternate;
+      cursor: pointer;
     }
-    p {
-      font-size: 1.5em;
-      margin-top: 20px;
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff69b4;
+      }
+      to {
+        text-shadow: 0 0 20px #ff1493, 0 0 30px #ff1493;
+      }
     }
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-10px); }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
-    .hearts {
-      font-size: 2em;
-      color: #ff69b4;
-      margin-top: 30px;
+
+    audio {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>🎂 ¡Feliz Cumple, Jenni! 🎉</h1>
-  <p>Te deseo un día lleno de amor, alegría y muchos abrazos.</p>
-  <p class="hearts">💖💗💖💗💖</p>
+  <h1 onclick="reaccion()">🎂 ¡Feliz Cumple, Jenni! 🎈</h1>
+  <canvas id="confettiCanvas"></canvas>
+  <audio id="audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" autoplay loop></audio>
+
+  <script>
+    // confeti
+    const canvas = document.getElementById("confettiCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiCount = 200;
+    const confetti = [];
+
+    for (let i = 0; i < confettiCount; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * confettiCount,
+        color: `hsl(${Math.random() * 360}, 100%, 75%)`,
+        tilt: Math.floor(Math.random() * 10) - 5,
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach((c, i) => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r / 2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 4, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 4);
+        ctx.stroke();
+      });
+      update();
+    }
+
+    let angle = 0;
+
+    function update() {
+      angle += 0.01;
+      confetti.forEach((c, i) => {
+        c.y += Math.cos(angle + c.d) + 1 + c.r / 2;
+        c.x += Math.sin(angle) * 2;
+
+        if (c.x > canvas.width + 5 || c.x < -5 || c.y > canvas.height) {
+          if (i % 3 > 0) {
+            confetti[i] = {
+              x: Math.random() * canvas.width,
+              y: -10,
+              r: c.r,
+              d: c.d,
+              color: c.color,
+              tilt: c.tilt
+            };
+          }
+        }
+      });
+    }
+
+    setInterval(draw, 20);
+
+    // mensaje interactivo
+    function reaccion() {
+      alert("🎊 ¡Que tu día esté lleno de magia, Jenni! 🎊");
+    }
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
